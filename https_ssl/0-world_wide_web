@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# This script audits DNS records for a domain and its subdomains
+
+# Function to fetch and print DNS record information
+get_dns_info() {
+    local subdomain=$1
+    local domain=$2
+    local record_info
+    record_info=$(dig +short "$subdomain.$domain" | head -n 1)
+
+    if [[ -z "$record_info" ]]; then
+        echo "The subdomain $subdomain does not exist or has no records"
+        return
+    fi
+
+    # Extract the record type (A or CNAME, etc.) and the destination IP
+    local record_type
+    record_type=$(dig "$subdomain.$domain" | grep -A1 'ANSWER SECTION:' | grep -Eo "IN\s+[A-Za-z]+\s+[0-9\.]+")
+    local destination
+    destination=$(echo "$record_type" | awk '{print $3}')
+
+    # Display the result
+    echo "The subdomain $subdomain is a A record and points to $destination"
+}
+
+# Check if the correct number of arguments is provided
+if [[ $# -ge 1 ]]; then
+    domain=$1
+    if [[ $# -eq 1 ]]; then
+        # Audit for default subdomains: www, lb-01, web-01, and web-02
+        for subdomain in www lb-01 web-01 web-02; do
+            get_dns_info "$subdomain" "$domain"
+        done
+    elif [[ $# -eq 2 ]]; then
+        subdomain=$2
+        # Audit for the specific subdomain
+        get_dns_info "$subdomain" "$domain"
+    fi
+else
+    echo "Usage: $0 domain [subdomain]"
+    exit 1
+fi
