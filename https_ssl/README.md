@@ -1,5 +1,5 @@
 # Webstack Configuration Project
-
+The beauty of learning ssl terminations and load balancing 
 This repository contains the files and configurations for setting up a web infrastructure using HAproxy for load balancing, SSL termination, and enforcing HTTPS on a web stack running on **Ubuntu 16.04 LTS**. The project covers tasks related to DNS configuration, SSL certificate management, and HTTP to HTTPS redirection.
 
 ---
