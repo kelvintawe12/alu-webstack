@@ -1,0 +1,9 @@
+# /etc/haproxy/haproxy.cfg
+
+frontend https-in
+    bind *:443 ssl crt /etc/letsencrypt/live/www.tawe.tech/fullchain.pem
+    default_backend web-servers
+
+backend web-servers
+    server web01 192.168.1.10:80 check
+    server web02 192.168.1.11:80 check
